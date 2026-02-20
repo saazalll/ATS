@@ -1,33 +1,34 @@
 # AI-Powered Resume Analyzer (Open Source)
 
-A modern Streamlit web app that analyzes resumes against a job description using open-source Python libraries only (no OpenAI API, no paid APIs, no cloud dependency required).
+A modern Streamlit ATS dashboard that analyzes resumes against job descriptions using only open-source Python libraries (no OpenAI API, no paid APIs).
 
-## Features
+## Core Features
 
 - Upload resume(s): **PDF, DOCX, TXT**
-- Paste a job description
-- Resume text extraction (pdfplumber, python-docx)
-- NLP preprocessing (NLTK):
-  - lowercase normalization
-  - stopword removal
-  - lemmatization
-- Skill extraction using a local predefined skill database (`data/skill_database.json`)
-- ATS similarity scoring using **TF-IDF + cosine similarity** (scikit-learn)
-- Insightful results:
-  - Match score (%)
-  - Matched skills
-  - Missing skills
-  - Resume strength analysis
-  - Weakness areas
-- Data visualizations using Plotly:
-  - Matched vs Missing skills
-  - Similarity score
-  - Bulk ranking chart
-- Bulk screening for multiple resumes with ranking
-- Download detailed PDF report (reportlab)
-- Clean UI with sidebar navigation
+- Single and bulk resume screening
+- TF-IDF + cosine similarity ATS scoring
+- Skill extraction from local JSON database
+- Matched / missing skills analysis
+- Downloadable PDF report
 
----
+## Advanced ATS Features
+
+- Keyword density analysis (JD skills in resume)
+- Skill heatmap visualization (Plotly)
+- Resume readability score (Flesch)
+- Experience level estimator (Entry / Mid / Senior)
+- Section detection (Skills / Education / Projects / Experience)
+- Ranking score breakdown chart
+- Matched keyword highlighting in resume preview
+- Smart improvement suggestions based on gaps
+
+## Modern UI
+
+- Wide layout + tab-based navigation
+- Dark glassmorphism-inspired custom CSS
+- KPI cards (ATS score, matched, missing)
+- Animated progress bars
+- SaaS-style spacing/typography and leaderboard view
 
 ## Project Structure
 
@@ -39,60 +40,35 @@ A modern Streamlit web app that analyzes resumes against a job description using
     scorer.py
     skill_extractor.py
     report_generator.py
+    advanced_analysis.py
 /data/skill_database.json
 requirements.txt
 README.md
 ```
 
----
-
 ## Installation
-
-### 1) Clone repository
-
-```bash
-git clone <your-repo-url>
-cd ATS
-```
-
-### 2) Create virtual environment
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate  # Linux/macOS
 # .venv\Scripts\activate   # Windows
-```
-
-### 3) Install dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-### 4) Run the app
+## Run
 
 ```bash
 streamlit run app.py
 ```
 
-Then open your browser at the URL shown by Streamlit (typically `http://localhost:8501`).
+Open `http://localhost:8501`.
 
----
+## NLTK Troubleshooting (punkt_tab)
 
-## How It Works
+If you see errors like `Resource punkt_tab not found`, run:
 
-1. Resume parser reads PDF/DOCX/TXT and extracts plain text.
-2. Text cleaner preprocesses resume and job description for robust comparison.
-3. Skill extractor finds known skills from local JSON database.
-4. Scorer computes ATS similarity with TF-IDF and cosine similarity.
-5. Results page displays score, skill gaps, strengths/weaknesses, and charts.
-6. PDF generator creates a downloadable candidate report.
+```bash
+python -c "import nltk; nltk.download('punkt_tab'); nltk.download('punkt'); nltk.download('stopwords'); nltk.download('wordnet'); nltk.download('omw-1.4')"
+```
 
----
-
-## Notes
-
-- This project is fully local-first and API-free.
-- To improve skill matching quality, expand `data/skill_database.json` with domain-specific skills.
-- For production deployment, consider adding authentication and persistent storage.
-
+The app also includes a fallback tokenizer if punkt resources are missing.
