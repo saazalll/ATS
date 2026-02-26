@@ -1,34 +1,47 @@
-# AI-Powered Resume Analyzer (Open Source)
+# ATS Resume Analyzer (Open Source)
 
-A modern Streamlit ATS dashboard that analyzes resumes against job descriptions using only open-source Python libraries (no OpenAI API, no paid APIs).
+Modern Streamlit ATS platform with attractive UI and 4 working modules:
+1. Single resume analysis
+2. Bulk resume analysis (up to 500 files)
+3. Video resume analysis (video + transcript)
+4. Resume builder
 
-## Core Features
+## What it does
 
-- Upload resume(s): **PDF, DOCX, TXT**
-- Single and bulk resume screening
-- TF-IDF + cosine similarity ATS scoring
-- Skill extraction from local JSON database
-- Matched / missing skills analysis
-- Downloadable PDF report
+- ATS score for single and bulk resumes
+- Missing skills extraction
+- Bulk shortlisting based on ATS threshold
+- Shortlisted results table with:
+  - ATS score
+  - Confidence score (SVM-based)
+- Bulk charts:
+  - ATS score vs file name
+  - ATS score vs confidence (grouped bar)
+- CSV download for shortlisted results
+- SVM-based confidence prediction to complement keyword matching
+- PDF report download for each candidate
 
-## Advanced ATS Features
+## Advanced ATS Insights
 
-- Keyword density analysis (JD skills in resume)
-- Skill heatmap visualization (Plotly)
+- Keyword density analysis
+- Skill heatmap visualization
 - Resume readability score (Flesch)
-- Experience level estimator (Entry / Mid / Senior)
-- Section detection (Skills / Education / Projects / Experience)
+- Experience level estimation (Entry/Mid/Senior)
+- Section detection (Skills/Education/Projects/Experience)
 - Ranking score breakdown chart
 - Matched keyword highlighting in resume preview
-- Smart improvement suggestions based on gaps
+- Smart improvement suggestions
 
-## Modern UI
+## Tech Stack
 
-- Wide layout + tab-based navigation
-- Dark glassmorphism-inspired custom CSS
-- KPI cards (ATS score, matched, missing)
-- Animated progress bars
-- SaaS-style spacing/typography and leaderboard view
+- Python 3.10+
+- Streamlit
+- scikit-learn (TF-IDF + cosine + SVM)
+- NLTK
+- pdfplumber
+- python-docx
+- plotly
+- reportlab
 
 ## Project Structure
 
@@ -52,6 +65,7 @@ README.md
 python -m venv .venv
 source .venv/bin/activate  # Linux/macOS
 # .venv\Scripts\activate   # Windows
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -63,12 +77,12 @@ streamlit run app.py
 
 Open `http://localhost:8501`.
 
-## NLTK Troubleshooting (punkt_tab)
+## NLTK Troubleshooting
 
-If you see errors like `Resource punkt_tab not found`, run:
+If you get `punkt_tab` errors:
 
 ```bash
 python -c "import nltk; nltk.download('punkt_tab'); nltk.download('punkt'); nltk.download('stopwords'); nltk.download('wordnet'); nltk.download('omw-1.4')"
 ```
 
-The app also includes a fallback tokenizer if punkt resources are missing.
+The app includes fallback tokenization/stopword logic as a backup.

@@ -43,6 +43,7 @@ def generate_pdf_report(candidate_name: str, ats_result: ATSResult, job_title: s
         ["Matched Skills", str(len(ats_result.matched_skills))],
         ["Missing Skills", str(len(ats_result.missing_skills))],
         ["Overall Score", f"{ats_result.score:.2f}%"],
+        ["SVM Confidence", f"{ats_result.confidence_score:.2f}%"],
     ]
 
     summary_table = Table(summary_data, colWidths=[180, 120])
