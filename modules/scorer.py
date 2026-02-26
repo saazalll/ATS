@@ -38,11 +38,12 @@ def _make_negative_samples(job_description: str, resume_text: str, n: int = 12) 
     resume_tokens = resume_text.split()
 
     negatives: list[str] = []
+    rng = random.Random(42)
     for _ in range(n):
-        random.shuffle(jd_tokens)
-        random.shuffle(resume_tokens)
+        rng.shuffle(jd_tokens)
+        rng.shuffle(resume_tokens)
         mixed = jd_tokens[: max(10, len(jd_tokens) // 4)] + resume_tokens[: max(10, len(resume_tokens) // 6)]
-        random.shuffle(mixed)
+        rng.shuffle(mixed)
         negatives.append(" ".join(mixed))
     return negatives
 

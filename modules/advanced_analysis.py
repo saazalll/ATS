@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html
 import re
 from collections import Counter
 
@@ -126,7 +127,7 @@ def top_keyword_matches(resume_text: str, jd_text: str, limit: int = 25) -> list
 
 def highlight_keywords(text: str, keywords: list[str]) -> str:
     """Return HTML-highlighted preview with matched keywords emphasized."""
-    snippet = text[:5000]
+    snippet = html.escape(text[:5000])
     highlighted = snippet
     for kw in sorted(set(keywords), key=len, reverse=True):
         if not kw.strip():

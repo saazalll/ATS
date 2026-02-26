@@ -1,6 +1,6 @@
 # ATS Resume Analyzer (Open Source)
 
-Modern Streamlit ATS platform with attractive UI and 4 working modules:
+Modern Streamlit ATS platform with attractive UI, light/dark theme toggle, and 4 working modules:
 1. Single resume analysis
 2. Bulk resume analysis (up to 500 files)
 3. Video resume analysis (video + transcript)
@@ -17,7 +17,7 @@ Modern Streamlit ATS platform with attractive UI and 4 working modules:
 - Bulk charts:
   - ATS score vs file name
   - ATS score vs confidence (grouped bar)
-- CSV download for shortlisted results
+- CSV download for shortlisted and all analyzed results
 - SVM-based confidence prediction to complement keyword matching
 - PDF report download for each candidate
 
@@ -68,6 +68,13 @@ source .venv/bin/activate  # Linux/macOS
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+## UI Highlights
+
+- Super-modern glassmorphism dashboard
+- Sidebar light/dark mode switch
+- Animated KPI cards and progress bars
+- Structured tabs for single/bulk/video/builder workflows
 
 ## Run
 

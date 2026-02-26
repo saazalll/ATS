@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from io import StringIO
 from typing import Any
 
 import pandas as pd
@@ -30,23 +29,30 @@ from modules.skill_extractor import extract_skills, flatten_skills, load_skill_d
 st.set_page_config(page_title="ATS Resume Analyzer", page_icon="🧠", layout="wide")
 
 
-def apply_custom_css() -> None:
+def apply_custom_css(theme: str = "Dark") -> None:
+    is_dark = theme == "Dark"
+    bg = "radial-gradient(circle at top left, #1f2a60, #0b1020 48%, #111827)" if is_dark else "linear-gradient(120deg,#f8fafc,#eef2ff)"
+    text = "#f8fafc" if is_dark else "#0f172a"
+    glass = "rgba(255,255,255,0.08)" if is_dark else "rgba(255,255,255,0.75)"
+    border = "rgba(255,255,255,.16)" if is_dark else "rgba(15,23,42,.15)"
+    card_grad = "linear-gradient(120deg, rgba(124,92,255,.35), rgba(34,197,94,.15))" if is_dark else "linear-gradient(120deg, rgba(79,70,229,.14), rgba(14,165,233,.12))"
+
     st.markdown(
-        """
+        f"""
         <style>
-            .stApp {
-                background: radial-gradient(circle at top left, #1f2a60, #0b1020 48%, #111827);
-                color: #f8fafc;
-            }
-            .block-container { max-width: 1500px; padding-top: 1rem; }
-            .glass { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,.16); border-radius: 18px; padding: 1rem; backdrop-filter: blur(10px); }
-            .kpi { background: linear-gradient(120deg, rgba(124,92,255,.35), rgba(34,197,94,.15)); border: 1px solid rgba(255,255,255,.2); border-radius: 16px; padding: .9rem 1rem; }
-            .kpi-title { font-size: .85rem; opacity: .85; }
-            .kpi-value { font-size: 2rem; font-weight: 800; }
-            .uploader-wrap { border: 2px dashed rgba(255,255,255,.25); border-radius: 14px; padding: .5rem; background: rgba(255,255,255,.03); }
-            mark.kw { background: rgba(99,102,241,.45); border-radius: 4px; color: #fff; padding: 0 2px; }
-            @keyframes fadeIn { from {opacity:0; transform: translateY(8px);} to {opacity:1; transform: translateY(0);} }
-            .fade { animation: fadeIn .5s ease; }
+            .stApp {{
+                background: {bg};
+                color: {text};
+            }}
+            .block-container {{ max-width: 1500px; padding-top: 1rem; }}
+            .glass {{ background: {glass}; border: 1px solid {border}; border-radius: 18px; padding: 1rem; backdrop-filter: blur(10px); }}
+            .kpi {{ background: {card_grad}; border: 1px solid {border}; border-radius: 16px; padding: .9rem 1rem; }}
+            .kpi-title {{ font-size: .85rem; opacity: .85; }}
+            .kpi-value {{ font-size: 2rem; font-weight: 800; }}
+            .uploader-wrap {{ border: 2px dashed {border}; border-radius: 14px; padding: .5rem; background: {glass}; }}
+            mark.kw {{ background: rgba(99,102,241,.45); border-radius: 4px; color: #fff; padding: 0 2px; }}
+            @keyframes fadeIn {{ from {{opacity:0; transform: translateY(8px);}} to {{opacity:1; transform: translateY(0);}} }}
+            .fade {{ animation: fadeIn .5s ease; }}
         </style>
         """,
         unsafe_allow_html=True,
@@ -198,17 +204,24 @@ def bulk_mode(job_title: str, jd: str, skill_pool: set[str]) -> None:
         df = pd.DataFrame(records).sort_values(by=["ATS Score", "Confidence Score"], ascending=False)
         shortlisted = df[df["Shortlisted"] == "Yes"].copy()
 
+        st.markdown("### 📊 All Analyzed Results")
+        st.dataframe(df[["File", "Candidate", "ATS Score", "Confidence Score", "Matched Skills", "Missing Skills", "Shortlisted"]], use_container_width=True)
+
         st.markdown("### 🏆 Shortlisted Results")
-        st.dataframe(shortlisted[["File", "Candidate", "ATS Score", "Confidence Score", "Matched Skills", "Missing Skills"]], use_container_width=True)
+        if shortlisted.empty:
+            st.warning("No resumes met the shortlist threshold. You can lower the threshold.")
+        else:
+            st.dataframe(shortlisted[["File", "Candidate", "ATS Score", "Confidence Score", "Matched Skills", "Missing Skills"]], use_container_width=True)
+            st.plotly_chart(px.bar(shortlisted, x="File", y="ATS Score", title="ATS Score vs Resume File", color="ATS Score"), use_container_width=True)
 
-        st.plotly_chart(px.bar(shortlisted, x="File", y="ATS Score", title="ATS Score vs Resume File", color="ATS Score"), use_container_width=True)
-
-        if not shortlisted.empty:
             ats_conf = shortlisted[["File", "ATS Score", "Confidence Score"]].melt(id_vars="File", var_name="Metric", value_name="Score")
             st.plotly_chart(px.bar(ats_conf, x="File", y="Score", color="Metric", barmode="group", title="ATS Score and Confidence"), use_container_width=True)
 
-        csv_bytes = shortlisted[["File", "Candidate", "ATS Score", "Confidence Score", "Matched Skills", "Missing Skills"]].to_csv(index=False).encode("utf-8")
-        st.download_button("Download Shortlisted CSV", data=csv_bytes, file_name="shortlisted_resumes.csv", mime="text/csv")
+        all_csv = df[["File", "Candidate", "ATS Score", "Confidence Score", "Matched Skills", "Missing Skills", "Shortlisted"]].to_csv(index=False).encode("utf-8")
+        st.download_button("Download All Results CSV", data=all_csv, file_name="all_resume_results.csv", mime="text/csv")
+
+        short_csv = shortlisted[["File", "Candidate", "ATS Score", "Confidence Score", "Matched Skills", "Missing Skills"]].to_csv(index=False).encode("utf-8")
+        st.download_button("Download Shortlisted CSV", data=short_csv, file_name="shortlisted_resumes.csv", mime="text/csv")
 
         if not shortlisted.empty:
             selected = st.selectbox("Inspect shortlisted candidate", shortlisted["Candidate"].tolist())
@@ -258,7 +271,11 @@ def resume_builder() -> None:
 
 
 def main() -> None:
-    apply_custom_css()
+    with st.sidebar:
+        st.markdown("### 🎨 Appearance")
+        theme = st.selectbox("Theme", ["Dark", "Light"], index=0)
+
+    apply_custom_css(theme)
     st.title("🧠 ATS Resume Analyzer")
     st.caption("Modern ATS checker with SVM confidence, advanced analytics, bulk shortlisting, and resume builder.")
 
