@@ -1,0 +1,52 @@
+{
+  "programming_languages": [
+    "python",
+    "java",
+    "javascript",
+    "typescript",
+    "c++",
+    "sql",
+    "r",
+    "go"
+  ],
+  "frameworks_libraries": [
+    "streamlit",
+    "django",
+    "flask",
+    "fastapi",
+    "react",
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "tensorflow",
+    "pytorch"
+  ],
+  "data_ai": [
+    "machine learning",
+    "deep learning",
+    "nlp",
+    "data analysis",
+    "feature engineering",
+    "model deployment",
+    "computer vision",
+    "statistics"
+  ],
+  "tools_platforms": [
+    "git",
+    "docker",
+    "kubernetes",
+    "linux",
+    "aws",
+    "azure",
+    "gcp",
+    "jenkins"
+  ],
+  "soft_skills": [
+    "communication",
+    "leadership",
+    "problem solving",
+    "teamwork",
+    "time management",
+    "critical thinking"
+  ]
+}
